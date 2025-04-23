@@ -15,7 +15,7 @@ export default function LoginPage() {
     setMensagem(null);
 
     try {
-      const response = await fetch("http://localhost:3003/api/login", {
+      const response = await fetch("https://api-only-mu.vercel.app/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senha, role: "ALUNO" }),

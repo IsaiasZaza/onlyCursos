@@ -33,7 +33,7 @@ export default function CertificatePage() {
       try {
         const decodedToken = decodeJwt(token);
         const userId = decodedToken.id;
-        const response = await fetch(`http://localhost:3003/api/user/${userId}`, {
+        const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

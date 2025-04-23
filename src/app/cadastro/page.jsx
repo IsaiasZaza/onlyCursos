@@ -26,7 +26,7 @@ export default function CadastroPage() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3003/api/user", {
+      const response = await fetch("https://api-only-mu.vercel.app/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nome, email, senha, profissao, cpf, role: "ALUNO" }),
@@ -37,7 +37,7 @@ export default function CadastroPage() {
       if (response.ok) {
         setMessage({ type: "success", text: "Cadastro realizado com sucesso!" });
         setTimeout(() => {
-          router.push("/dashboard");
+          router.push("/login");
         }, 2000);
       } else {
         setMessage({ type: "error", text: data.message || "Erro ao cadastrar." });

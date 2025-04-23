@@ -48,7 +48,7 @@ const ProfilePage = () => {
         const userId = decodedToken.id;
         setUserId(userId);
 
-        const response = await fetch(`http://localhost:3003/api/user/${userId}`, {
+        const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}`, {
           method: "GET",
           headers: { "Authorization": `Bearer ${token}` },
         });
@@ -80,7 +80,7 @@ const ProfilePage = () => {
       if (!token) return;
 
       try {
-        const response = await fetch(`http://localhost:3003/api/user/${userId}/profile-picture`, {
+        const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}/profile-picture`, {
           method: "PUT",
           body: formData,
         });
@@ -101,7 +101,7 @@ const ProfilePage = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(`http://localhost:3003/api/user/${userId}`, {
+      const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +129,7 @@ const ProfilePage = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
     try {
-      const response = await fetch(`http://localhost:3003/api/user/${userId}/profile-picture`, {
+      const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}/profile-picture`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` },
       });

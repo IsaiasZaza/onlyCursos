@@ -58,7 +58,7 @@ const Aluno = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await fetch(`http://localhost:3003/api/curso/${id}`);
+        const response = await fetch(`https://api-only-mu.vercel.app/api/curso/${id}`);
         const data = await response.json();
         setLoading(false);
       } catch (error) {
@@ -87,7 +87,7 @@ const Aluno = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3003/api/user/${decodedToken.id}`, {
+        const response = await fetch(`https://api-only-mu.vercel.app/api/user/${decodedToken.id}`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
