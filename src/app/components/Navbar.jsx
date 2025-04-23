@@ -5,9 +5,7 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 
 const menuItems = [
   { name: "Início", href: "hero" },
-  { name: "Recursos", href: "features" },
-  { name: "Portfólio", href: "portifolio" },
-  { name: "Público-Alvo", href: "publico-alvo" },
+  { name: "Acessar Plataforma", href: "features" },
   { name: "Contato", href: "formulario" },
 ];
 
@@ -23,7 +21,7 @@ export default function Navbar() {
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo com Image */}
         <a href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-principal">Seu Nome</span>
+          <span className="text-xl font-bold text-principal">OnlyCursos</span>
         </a>
 
         {/* Ícone do Menu */}

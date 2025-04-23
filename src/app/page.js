@@ -1,6 +1,9 @@
 import { BookOpen, CheckCircle, Code, Laptop, Star } from "lucide-react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import CTASections from "./components/CTASections";
+import FeaturesSection from "./components/FeatureSection";
+
 
 const courses = [
   {
@@ -47,10 +50,10 @@ export default function Home() {
 
         {/* Foreground content */}
         <div className="relative z-10 px-6 max-w-3xl text-white">
-          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+          <h1 className="text-4xl md:text-4xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-4 drop-shadow-lg">
             Cursos de TI para Concursos Públicos
           </h1>
-          <p className="text-zinc-100 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-zinc-100 text-2xl max-w-2xl mx-auto mb-8">
             Aumente suas chances de aprovação com os melhores conteúdos focados em concursos de tecnologia.
           </p>
           <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-8 py-3 rounded-2xl text-lg shadow-xl transition duration-300">
@@ -116,6 +119,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <FeaturesSection />
+      <CTASections />
       <Footer />
 
 
