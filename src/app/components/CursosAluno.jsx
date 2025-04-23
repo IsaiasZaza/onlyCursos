@@ -26,7 +26,7 @@ const CoursesPage = () => {
           return;
         }
 
-        const response = await fetch("https://crud-usuario.vercel.app/api/cursos");
+        const response = await fetch("https://api-only-mu.vercel.app/api/cursos");
 
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
