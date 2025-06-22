@@ -52,7 +52,7 @@ export default function VideoPlayer() {
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const response = await fetch(`http://localhost:3003/api/perguntas/${id}`);
+                const response = await fetch(`https://api-only-mu.vercel.app/api/perguntas/${id}`);
                 const data = await response.json();
                 console.log(data);
 

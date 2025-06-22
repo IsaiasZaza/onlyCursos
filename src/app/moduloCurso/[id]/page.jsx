@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MenuLateral from "../../components/MenuLateral";
+import MenuLateral from "../../../components/MenuLateral";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 

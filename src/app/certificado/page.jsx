@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import MenuLateral from "../components/MenuLateral";
+import MenuLateral from "@/components/MenuLateral";
 import { decodeJwt } from "jose";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import { useRouter } from "next/navigation";
 
 export default function CertificatePage() {
   const [userData, setUserData] = useState(null);
@@ -12,8 +13,9 @@ export default function CertificatePage() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [dataAtual, setDataAtual] = useState("");
   const certificateRef = useRef(null);
+  const router = useRouter();
+  const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
 
-  // Define a data atual automaticamente (formato dd/mm/aaaa)
   useEffect(() => {
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, "0");
@@ -22,7 +24,30 @@ export default function CertificatePage() {
     setDataAtual(`${dia}/${mes}/${ano}`);
   }, []);
 
-  // Busca os dados do usuário automaticamente com base no token
+  useEffect(() => {
+    const verificarToken = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+      try {
+        const res = await fetch("https://crud-usuario.vercel.app/api/api/validar-token", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          localStorage.removeItem("token");
+          router.replace("/login");
+        }
+      } catch (error) {
+        console.error("Erro ao validar token:", error);
+        localStorage.removeItem("token");
+        router.replace("/login");
+      }
+    };
+    verificarToken();
+  }, [router]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
@@ -34,15 +59,11 @@ export default function CertificatePage() {
         const decodedToken = decodeJwt(token);
         const userId = decodedToken.id;
         const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (!response.ok) {
-          throw new Error("Erro ao buscar dados do usuário");
-        }
-        const data = await response.json();
+        if (!response.ok) throw new Error("Erro ao buscar dados do usuário");
+        const dataTeste = await response.json();
+        const data = dataTeste;
         setUserData(data.user || data);
       } catch (err) {
         console.error("Erro ao buscar dados do usuário:", err);
@@ -52,18 +73,15 @@ export default function CertificatePage() {
     fetchUserData();
   }, []);
 
-  // Seleciona o curso
   const handleSelectCourse = (courseTitle) => {
     setSelectedCourse(courseTitle);
   };
 
-  // Função que gera o PDF usando html2canvas e jsPDF
   const handleDownloadPDF = async () => {
     if (!certificateRef.current) return;
     try {
       const canvas = await html2canvas(certificateRef.current, { scale: 2 });
       const imgData = canvas.toDataURL("image/png");
-
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "px",
@@ -77,7 +95,6 @@ export default function CertificatePage() {
     }
   };
 
-  // Função para fechar a visualização do certificado
   const handleCloseCertificate = () => {
     setSelectedCourse(null);
   };
@@ -88,9 +105,7 @@ export default function CertificatePage() {
       <div className="flex-grow p-4 md:p-8">
         <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
           <header className="bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-center">
-              Gerar Certificado
-            </h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-center">Gerar Certificado</h1>
           </header>
 
           <div className="p-4 sm:p-6 lg:p-8">
@@ -112,11 +127,11 @@ export default function CertificatePage() {
                     userData.courses.map((course) => (
                       <div
                         key={course.id || course.title}
-                        className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-lg shadow hover:shadow-lg transition-transform duration-300 transform "
+                        className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-lg shadow hover:shadow-lg transition-transform duration-300"
                       >
                         <span className="text-gray-800 font-medium">{course.title}</span>
                         <button
-                          onClick={() => handleSelectCourse(course.title)}
+                          onClick={() => setShowMaintenanceModal(true)}
                           className="mt-2 sm:mt-0 bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors"
                         >
                           Gerar Certificado
@@ -148,37 +163,24 @@ export default function CertificatePage() {
                     />
                   </div>
                   <div className="text-center">
-                    <h1 className="text-2xl sm:text-4xl font-bold text-blue-800">
-                      Certificado de Conclusão
-                    </h1>
+                    <h1 className="text-2xl sm:text-4xl font-bold text-blue-800">Certificado de Conclusão</h1>
                     <p className="mt-4 sm:mt-6 text-base sm:text-xl leading-relaxed text-gray-700">
-                      Certificamos que{" "}
-                      <strong className="font-semibold">{userData.nome}</strong> concluiu com êxito o curso{" "}
-                      <strong className="font-semibold">{selectedCourse}</strong> no dia{" "}
-                      <strong className="font-semibold">{dataAtual}</strong>.
+                      Certificamos que <strong>{userData.nome}</strong> concluiu com êxito o curso{" "}
+                      <strong>{selectedCourse}</strong> no dia <strong>{dataAtual}</strong>.
                     </p>
                   </div>
                   <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row justify-evenly items-center gap-6">
                     <div className="flex flex-col items-center">
-                      <img
-                        src="/assinatura.png"
-                        alt="Assinatura"
-                        className="w-24 sm:w-32 mb-2"
-                      />
+                      <img src="/assinatura.png" alt="Assinatura" className="w-24 sm:w-32 mb-2" />
                       <p className="text-xs sm:text-sm text-gray-600">Diretor(a)</p>
                     </div>
                     <div className="flex flex-col items-center">
-                      <img
-                        src="/carimbo.png"
-                        alt="Carimbo"
-                        className="w-16 sm:w-20 mb-2"
-                      />
+                      <img src="/carimbo.png" alt="Carimbo" className="w-16 sm:w-20 mb-2" />
                       <p className="text-xs sm:text-sm text-gray-600">Carimbo Oficial</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Botões de ação */}
                 <div className="mt-6 text-center flex flex-col sm:flex-row justify-center items-center gap-4">
                   <button
                     onClick={handleDownloadPDF}
@@ -198,6 +200,41 @@ export default function CertificatePage() {
           </div>
         </div>
       </div>
+
+      {showMaintenanceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 sm:p-8 animate-fadeIn">
+            <div className="flex flex-col items-center text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-12 h-12 text-yellow-500 mb-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2.25m0 3.75h.008v.008H12v-.008zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">Em manutenção</h2>
+              <p className="text-gray-600 mb-6">
+                A geração de certificados está temporariamente indisponível.
+                <br />
+                Estamos trabalhando para resolver isso o mais rápido possível.
+              </p>
+              <button
+                onClick={() => setShowMaintenanceModal(false)}
+                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Entendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

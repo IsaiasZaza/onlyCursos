@@ -14,8 +14,8 @@ const CardCurso = ({ status, titulo, progresso, aulasConcluidas, totalAulas, lin
   return (
     <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
       <div className={`flex items-center gap-2 font-bold ${status === "Concluído" ? "text-green-500" : "text-blue-500"}`}>
-        {status === "Concluído" ? <FaCheckCircle /> : <FiClock />}
-        <p>{status}</p>
+        
+      
       </div>
       <h3 className="text-lg text-gray-900 font-bold border-b-2 pb-3 mt-2 border-gray-300">{titulo}</h3>
       <div className="w-full bg-gray-300 h-2 rounded-full mt-2">

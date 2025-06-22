@@ -1,4 +1,4 @@
-import DadosAluno from "../components/DadosAluno"
+import DadosAluno from "../../components/DadosAluno"
 const dados = () => {
     return (
         <DadosAluno />

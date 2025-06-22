@@ -1,8 +1,8 @@
 import { BookOpen, CheckCircle, Code, Laptop, Star } from "lucide-react";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import CTASections from "./components/CTASections";
-import FeaturesSection from "./components/FeatureSection";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import CTASections from "../components/CTASections";
+import FeaturesSection from "../components/FeatureSection";
 
 
 const courses = [

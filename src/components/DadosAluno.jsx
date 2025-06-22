@@ -23,6 +23,10 @@ const ProfilePage = () => {
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [mensagem, setMensagem] = useState('');
+  const [tipoMensagem, setTipoMensagem] = useState(''); // 'sucesso' ou 'erro'
+
+
 
   const formatCPF = (cpf) => {
     if (!cpf) return "";
@@ -34,6 +38,31 @@ const ProfilePage = () => {
   const handleEditField = (field) => {
     setEditingField(field);
     setModalValue(userData[field] || "");
+  };
+
+
+  const handleChangePassword = async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !senhaAtual || !novaSenha) throw new Error("Dados insuficientes");
+
+    const response = await fetch(`https://api-only-mu.vercel.app/api/user/${userId}/change-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        senhaAtual,
+        novaSenha,
+      }),
+    });
+
+    if (!response.ok) {
+      const erro = await response.json();
+      throw new Error(erro.message || "Erro ao alterar a senha");
+    }
+
+    return await response.json();
   };
 
   useEffect(() => {
@@ -235,40 +264,69 @@ const ProfilePage = () => {
 
       {/* Modal de Senha */}
       {isPasswordModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl w-11/12 max-w-sm p-6 space-y-4">
-            <h2 className="text-xl font-bold text-center text-gray-800">Alterar Senha</h2>
-            <div>
-              <label className="block text-gray-700 mb-1">Senha Atual</label>
-              <input
-                type="password"
-                className="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={senhaAtual}
-                onChange={(e) => setSenhaAtual(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-1">Nova Senha</label>
-              <input
-                type="password"
-                className="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={novaSenha}
-                onChange={(e) => setNovaSenha(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-between items-center pt-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Alterar Senha</h2>
+
+            {/* Mensagens de feedback */}
+            {mensagem && (
+              <div
+                className={`mb-4 px-4 py-2 rounded text-sm ${tipoMensagem === 'erro'
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-green-100 text-green-700'
+                  }`}
+              >
+                {mensagem}
+              </div>
+            )}
+
+            <label className="block text-gray-700 mb-2">Senha Atual</label>
+            <input
+              type="password"
+              className="w-full border border-gray-300 p-2 rounded mb-4 text-black"
+              value={senhaAtual}
+              onChange={(e) => setSenhaAtual(e.target.value)}
+            />
+
+            <label className="block text-gray-700 mb-2">Nova Senha</label>
+            <input
+              type="password"
+              className="w-full border border-gray-300 p-2 rounded mb-4 text-black"
+              value={novaSenha}
+              onChange={(e) => setNovaSenha(e.target.value)}
+            />
+
+            <div className="flex justify-end gap-2">
               <button
-                className="text-red-600 hover:underline"
                 onClick={() => setIsPasswordModalOpen(false)}
+                className="px-4 py-2 bg-red-600 rounded hover:bg-gray-300 text-white "
               >
                 Cancelar
               </button>
               <button
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
-                onClick={handleSaveField}
-                disabled={isSubmitting}
+                onClick={async () => {
+                  setMensagem(""); // limpa mensagens anteriores
+                  setTipoMensagem("");
+
+                  try {
+                    await handleChangePassword();
+                    setMensagem("Senha alterada com sucesso!");
+                    setTipoMensagem("sucesso");
+                    setSenhaAtual("");
+                    setNovaSenha("");
+                    setTimeout(() => {
+                      setIsPasswordModalOpen(false);
+                      setMensagem("");
+                    }, 2000);
+                  } catch (err) {
+                    console.error(err);
+                    setMensagem(err.message || "Erro ao alterar a senha. Verifique os dados e tente novamente.");
+                    setTipoMensagem("erro");
+                  }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
-                {isSubmitting ? "Salvando..." : "Salvar"}
+                Salvar
               </button>
             </div>
           </div>
