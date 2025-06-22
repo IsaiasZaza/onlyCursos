@@ -111,12 +111,6 @@ const moduloCurso = () => {
                         </div>
                     </div>
 
-                    <div>
-                        <h2 className="text-2xl font-semibold mb-4 text-blue-500">Tire dúvidas</h2>
-                        <div className="bg-gray-200 rounded-lg h-40 flex items-center justify-center text-center font-semibold shadow-md">
-                            Fale com o professor
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

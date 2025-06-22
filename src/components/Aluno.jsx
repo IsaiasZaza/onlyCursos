@@ -27,10 +27,6 @@ const CardCurso = ({ status, titulo, progresso, aulasConcluidas, totalAulas, lin
             <BsFileText />
             <p>{progresso}</p>
           </div>
-          <div className="flex items-center gap-1">
-            <BsPlayCircle />
-            <p>{`${aulasConcluidas}/${totalAulas}`}</p>
-          </div>
         </div>
         <button
           onClick={() => router.push(link)}
